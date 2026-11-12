@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кофе In — кофе и десерты с собой, Краснодар</title>
+  <meta name="description" content="Кофейня «Кофе In» на ул. Соколова, 19 в Краснодаре. Закажите кофе и десерты онлайн — заявка придёт нам в Telegram или MAX.">
+  <meta name="theme-color" content="#FBF5EC">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%232B211C'/><text x='32' y='42' font-size='26' text-anchor='middle' fill='%23FBF5EC' font-family='Arial' font-weight='700'>In</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="loader" id="loader" aria-hidden="true">
+    <span class="loader__pct" id="loaderPct">0%</span>
+    <span class="loader__bar"><i id="loaderBar"></i></span>
+    <span class="loader__mark">КОФЕ IN</span>
+  </div>
+
+  <header class="header" id="header">
+    <a class="logo" href="#top" aria-label="Кофе In — наверх">КОФЕ&nbsp;<b>IN</b></a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#catalog">Каталог</a>
+      <a href="#how">Как заказать</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <button class="cart-btn" id="cartOpen" type="button" aria-label="Открыть заказ">
+      Заказ <span class="cart-btn__count" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero__steam" aria-hidden="true"><i></i><i></i><i></i></div>
+      <ul class="hero__side">
+        <li>Кофе</li><li>Авторские напитки</li><li>Десерты</li><li>Зерно домой</li>
+      </ul>
+      <h1 class="hero__title">
+        <span class="w">Кофе,</span> <span class="w">который</span> <span class="w"><em>хочется</em></span>
+        <span class="w">заказать</span> <span class="w">снова</span>
+      </h1>
+      <p class="hero__lead" id="heroLead"></p>
+      <div class="hero__cta">
+        <a class="pill" href="#catalog">Смотреть каталог</a>
+        <span class="hero__rating" id="heroRating"></span>
+      </div>
+      <span class="hero__scroll">листайте вниз</span>
+    </section>
+
+    <section class="manifest" aria-label="О кофейне">
+      <p class="manifest__text reveal-words">Утро начинается не с будильника, а с чашки, сваренной для вас. Свежая обжарка, выпечка с утра и пять минут тишины — заберите их с собой.</p>
+      <div class="manifest__grid">
+        <div><span class="idx">A</span><h3>Свежая обжарка</h3><p>Зерно обжариваем небольшими партиями — вкус яркий и чистый.</p></div>
+        <div><span class="idx">B</span><h3>Без очереди</h3><p>Оформите заказ на сайте и заберите к нужному времени.</p></div>
+        <div><span class="idx">C</span><h3>Десерты утром</h3><p>Круассаны и торты к кофе — каждый день свежие.</p></div>
+      </div>
+    </section>
+
+    <section class="catalog" id="catalog">
+      <div class="catalog__head">
+        <h2>Каталог</h2>
+        <p>Выберите напитки и десерты — заявка уйдёт нам в мессенджер.</p>
+      </div>
+      <nav class="tabs" id="tabs" aria-label="Категории"></nav>
+      <div id="catalogBody"></div>
+    </section>
+
+    <section class="how" id="how">
+      <h2 class="reveal-words">Три шага до вашей чашки</h2>
+      <ol class="how__steps">
+        <li><span class="idx">1.</span><h3>Соберите заказ</h3><p>Добавьте напитки и десерты, выберите объём.</p></li>
+        <li><span class="idx">2.</span><h3>Укажите детали</h3><p>Имя, телефон, время — самовывоз или доставка.</p></li>
+        <li><span class="idx">3.</span><h3>Отправьте</h3><p>В Telegram или MAX — мы подтвердим заказ в ответ.</p></li>
+      </ol>
+    </section>
+
+    <section class="contacts" id="contacts">
+      <div>
+        <h2>Ждём в гости</h2>
+        <dl class="contacts__list" id="contactsList"></dl>
+      </div>
+      <div class="contacts__map">
+        <iframe title="Кофе In на карте" loading="lazy"
+          src="https://yandex.ru/map-widget/v1/?ll=38.985877%2C45.115612&z=17&pt=38.985877%2C45.115612%2Cpm2brm&oid=140615141411&ol=biz"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="logo">КОФЕ&nbsp;<b>IN</b></span>
+    <span id="footerYear"></span>
+  </footer>
+
+  <div class="overlay" id="overlay" hidden></div>
+  <aside class="drawer" id="drawer" aria-label="Ваш заказ" aria-hidden="true">
+    <div class="drawer__head">
+      <h2>Ваш заказ</h2>
+      <button class="icon-btn" id="cartClose" type="button" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="drawer__body">
+      <ul class="lines" id="lines"></ul>
+      <p class="empty" id="empty">Пока пусто. Добавьте что-нибудь вкусное из каталога.</p>
+
+      <form class="form" id="orderForm" novalidate>
+        <div class="total"><span>Итого</span><b id="total">0 ₽</b></div>
+        <label>Имя<input name="name" autocomplete="given-name" required maxlength="60"></label>
+        <label>Телефон<input name="phone" type="tel" autocomplete="tel" required placeholder="+7 900 000-00-00" maxlength="20"></label>
+        <fieldset class="seg">
+          <legend>Получение</legend>
+          <label><input type="radio" name="mode" value="pickup" checked><span>Самовывоз</span></label>
+          <label><input type="radio" name="mode" value="delivery"><span>Доставка</span></label>
+        </fieldset>
+        <label class="addr" hidden>Адрес доставки<input name="address" autocomplete="street-address" maxlength="120"></label>
+        <label>Ко времени<input name="time" type="time"></label>
+        <label>Комментарий<textarea name="comment" rows="2" maxlength="300" placeholder="Например: на овсяном молоке"></textarea></label>
+        <p class="form__err" id="formErr" role="alert"></p>
+        <div class="send">
+          <button class="pill pill--tg" type="submit" data-via="telegram">Отправить в Telegram</button>
+          <button class="pill pill--ghost" type="submit" data-via="max">Отправить в MAX</button>
+        </div>
+        <p class="form__hint">Откроется чат с кофейней — текст заказа уже будет в нём (или скопирован, просто вставьте).</p>
+      </form>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="order.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
