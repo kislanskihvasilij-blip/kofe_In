@@ -33,16 +33,26 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .idx { font-family: var(--serif); font-style: italic; font-size: 1.6rem; color: var(--caramel); }
 
 /* ---------- loader ---------- */
-.loader {
-  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
+.loader { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; color: var(--cream); }
+.loader.open { pointer-events: none; }
+.loader__half {
+  position: absolute; left: 0; right: 0; height: 50.5%;
   background: radial-gradient(120% 90% at 30% 20%, #CDBBA5 0%, #A8927C 55%, #8C7663 100%);
-  color: var(--cream); transition: opacity .7s var(--ease), visibility .7s;
+  background-size: 100% 200%; transition: transform 1.1s cubic-bezier(.76, 0, .24, 1) .2s;
 }
-.loader.done { opacity: 0; visibility: hidden; }
-.loader__pct { position: absolute; top: 18px; font-size: 12px; letter-spacing: .1em; }
-.loader__bar { position: absolute; top: 44px; left: 0; right: 0; height: 1px; background: rgba(251,245,236,.2); }
-.loader__bar i { display: block; height: 100%; width: 0; background: rgba(251,245,236,.7); transition: width .15s linear; }
-.loader__mark { font-weight: 600; font-size: clamp(2rem, 6vw, 3.4rem); letter-spacing: .28em; }
+.loader__half--top { top: 0; background-position: 0 0; }
+.loader__half--bot { bottom: 0; background-position: 0 100%; }
+.loader.open .loader__half--top { transform: translateY(-100%); }
+.loader.open .loader__half--bot { transform: translateY(100%); }
+.loader__stage { position: relative; display: grid; justify-items: center; gap: 18px; }
+.loader__cup { width: clamp(130px, 20vw, 190px); height: auto; overflow: visible; filter: drop-shadow(0 18px 24px rgba(43,33,28,.25)); }
+.loader__wave { animation: wave 1.4s linear infinite; }
+@keyframes wave { to { transform: translateX(60px); } }
+.loader__lid { transform-box: fill-box; transform-origin: 85% 100%; transition: transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.loader.open .loader__lid { transform: translate(10px, -16px) rotate(18deg); }
+.loader__pct { font-size: 12px; letter-spacing: .2em; font-variant-numeric: tabular-nums; transition: opacity .3s; }
+.loader.open .loader__pct { opacity: 0; }
+.logo__i { display: inline-block; }
 
 /* ---------- header ---------- */
 .header {
@@ -165,12 +175,21 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .card:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -28px rgba(43,33,28,.55); }
 .card__plate {
-  position: relative; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; display: grid; place-items: center;
-  background: var(--plate, radial-gradient(70% 70% at 35% 30%, #D9C2A5, #9C7656));
+  position: relative; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; display: grid; place-items: end center;
+  background: var(--plate, radial-gradient(70% 70% at 35% 30%, #E6D2B8, #B48E69));
 }
-.card__plate img { width: 100%; height: 100%; object-fit: cover; }
-.card__glyph { font-family: var(--serif); font-style: italic; font-size: 5.5rem; line-height: 1; color: rgba(251,245,236,.85); transition: transform .8s var(--ease); }
-.card:hover .card__glyph { transform: scale(1.08) rotate(-4deg); }
+.card__plate::after { /* «стол», на котором стоит миниатюра */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22%;
+  background: linear-gradient(rgba(43,33,28,0), rgba(43,33,28,.12));
+}
+.card__plate img { width: 100%; height: 100%; object-fit: cover; align-self: stretch; }
+.card__art {
+  position: absolute; z-index: 1; left: 50%; bottom: 5%; height: 82%; width: auto; aspect-ratio: 120 / 160; overflow: visible;
+  transform: translateX(-50%) scale(var(--s, 1)); transform-origin: 50% 96%;
+  transition: transform .6s var(--ease); filter: drop-shadow(0 10px 14px rgba(43,33,28,.18));
+}
+.card__art--small { height: 56%; }
+.card:hover .card__art { transform: translateX(-50%) scale(var(--s, 1)) translateY(-4px) rotate(-3deg); }
 .card__tag { position: absolute; top: 12px; left: 12px; background: var(--cream); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; }
 .card__body { padding: 14px 8px 8px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .card__body h4 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
@@ -192,10 +211,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .add.ok { background: var(--caramel); }
 
 /* категории — свои оттенки «тарелок» */
-.cat--coffee { --plate: radial-gradient(70% 70% at 35% 30%, #C9A27E, #6E4B33); }
-.cat--signature { --plate: radial-gradient(70% 70% at 35% 30%, #E2B98F, #A0653C); }
-.cat--desserts { --plate: radial-gradient(70% 70% at 35% 30%, #EBD8BF, #B98E68); }
-.cat--beans { --plate: radial-gradient(70% 70% at 35% 30%, #8A6A55, #2F231C); }
+.cat--coffee { --plate: radial-gradient(80% 80% at 50% 25%, #DCC2A2, #A27B57); }
+.cat--signature { --plate: radial-gradient(80% 80% at 50% 25%, #EBCDA8, #B9875A); }
+.cat--desserts { --plate: radial-gradient(80% 80% at 50% 25%, #F1E2CE, #CDA982); }
+.cat--beans { --plate: radial-gradient(80% 80% at 50% 25%, #CDB59A, #8C6B50); }
 
 /* ---------- how ---------- */
 .how { padding: var(--section) var(--gutter); background: var(--coffee); color: var(--cream); }
@@ -288,7 +307,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (max-width: 520px) {
   .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .card { padding: 6px; border-radius: 18px; }
-  .card__glyph { font-size: 3.6rem; }
   .card__body { padding: 10px 4px 4px; gap: 8px; }
   .card__body h4 { font-size: 15px; }
   .card__body p { font-size: 12px; }

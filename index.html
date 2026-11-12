@@ -13,14 +13,48 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- общие градиенты для SVG-миниатюр (cups.js) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="kShade" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#2B211C" stop-opacity=".26"/>
+        <stop offset=".2" stop-color="#2B211C" stop-opacity="0"/>
+        <stop offset=".62" stop-color="#fff" stop-opacity=".16"/>
+        <stop offset=".86" stop-color="#2B211C" stop-opacity="0"/>
+        <stop offset="1" stop-color="#2B211C" stop-opacity=".28"/>
+      </linearGradient>
+      <clipPath id="loaderBody"><path d="M22 38H98L88 148Q60 152 32 148Z"/></clipPath>
+    </defs>
+  </svg>
+
   <div class="loader" id="loader" aria-hidden="true">
-    <span class="loader__pct" id="loaderPct">0%</span>
-    <span class="loader__bar"><i id="loaderBar"></i></span>
-    <span class="loader__mark">КОФЕ IN</span>
+    <div class="loader__half loader__half--top"></div>
+    <div class="loader__half loader__half--bot"></div>
+    <div class="loader__stage">
+      <svg class="loader__cup" id="loaderCup" viewBox="0 -10 120 170">
+        <ellipse cx="60" cy="151" rx="36" ry="5" fill="#2B211C" opacity=".2"/>
+        <path d="M22 38H98L88 148Q60 152 32 148Z" fill="#FBF5EC" fill-opacity=".92"/>
+        <g clip-path="url(#loaderBody)">
+          <g id="loaderFill" transform="translate(0 112)">
+            <path class="loader__wave" fill="#6B4630"
+              d="M-120 40Q-105 33-90 40T-60 40-30 40 0 40 30 40 60 40 90 40 120 40 150 40 180 40 210 40 240 40V220H-120Z"/>
+          </g>
+        </g>
+        <path d="M22 38H98L88 148Q60 152 32 148Z" fill="url(#kShade)"/>
+        <path d="M25.1 72H94.9L90.9 116H29.1Z" fill="#A9744A" fill-opacity=".85"/>
+        <text x="60" y="101" text-anchor="middle" font-family="Cormorant Garamond,Georgia,serif" font-style="italic" font-size="22" fill="#FBF5EC">In</text>
+        <g class="loader__lid">
+          <rect x="17" y="29" width="86" height="11" rx="5" fill="#FFFDF9"/>
+          <path d="M25 30Q27 17 42 15H78Q93 17 95 30Z" fill="#EFE7DC"/>
+          <ellipse cx="74" cy="21" rx="6" ry="2" fill="#2B211C" opacity=".5"/>
+        </g>
+      </svg>
+      <span class="loader__pct" id="loaderPct">0%</span>
+    </div>
   </div>
 
   <header class="header" id="header">
-    <a class="logo" href="#top" aria-label="Кофе In — наверх">КОФЕ&nbsp;<b>IN</b></a>
+    <a class="logo" href="#top" aria-label="Кофе In — наверх">КОФЕ&nbsp;<b><span class="logo__i" id="logoI">I</span>N</b></a>
     <nav class="nav" aria-label="Разделы">
       <a href="#catalog">Каталог</a>
       <a href="#how">Как заказать</a>
@@ -129,6 +163,7 @@
 
   <script src="config.js"></script>
   <script src="order.js"></script>
+  <script src="cups.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

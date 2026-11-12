@@ -6,6 +6,8 @@
   const price = (n) => formatPrice(n, C.currency);
   const byId = Object.fromEntries(C.items.map((i) => [i.id, i]));
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // больший объём — стаканчик чуть выше
+  const cupScale = (i, n) => (i.sizes.length > 1 ? 0.84 + (0.16 * n) / (i.sizes.length - 1) : 1).toFixed(3);
 
   // ---------- корзина: { "id|sizeIdx": qty } ----------
   const KEY = "kofe_cart";
@@ -53,13 +55,13 @@
   function card(i) {
     const plate = i.img
       ? `<img src="${esc(i.img)}" alt="${esc(i.name)}" loading="lazy" width="400" height="300">`
-      : `<span class="card__glyph" aria-hidden="true">${esc(i.name[0])}</span>`;
+      : window.KofeArt.itemArt(i);
     const sizes = i.sizes.length > 1
       ? `<div class="sizes" role="group" aria-label="Объём">${i.sizes.map(([s], n) =>
           `<button type="button" data-size="${n}" aria-pressed="${n === 0}">${esc(s)}</button>`).join("")}</div>`
       : `<div class="sizes"><span class="line__meta">${esc(i.sizes[0][0])}</span></div>`;
     return `<article class="card" data-id="${esc(i.id)}" data-size="0">
-      <div class="card__plate">${plate}${i.tag ? `<span class="card__tag">${esc(i.tag)}</span>` : ""}</div>
+      <div class="card__plate" style="--s:${cupScale(i, 0)}">${plate}${i.tag ? `<span class="card__tag">${esc(i.tag)}</span>` : ""}</div>
       <div class="card__body">
         <h4>${esc(i.name)}</h4><p>${esc(i.desc || "")}</p>
         ${sizes}
@@ -77,6 +79,7 @@
       el.dataset.size = sizeBtn.dataset.size;
       el.querySelectorAll(".sizes button").forEach((b) => b.setAttribute("aria-pressed", b === sizeBtn));
       el.querySelector(".price").textContent = price(item.sizes[sizeBtn.dataset.size][1]);
+      el.querySelector(".card__plate").style.setProperty("--s", cupScale(item, Number(sizeBtn.dataset.size)));
       return;
     }
     const add = e.target.closest(".add");
@@ -198,17 +201,59 @@
   addEventListener("scroll", () => requestAnimationFrame(revealWords), { passive: true });
   revealWords();
 
-  // загрузчик с процентами
-  const pct = $("#loaderPct"), bar = $("#loaderBar");
-  const start = performance.now(), dur = reduced ? 0 : 1100;
-  (function tick(now) {
-    const p = Math.min(1, dur ? Math.max(0, now - start) / dur : 1);
-    pct.textContent = Math.round(p * 100) + "%"; bar.style.width = p * 100 + "%";
-    if (p < 1) return requestAnimationFrame(tick);
-    $("#loader").classList.add("done");
-    document.querySelectorAll(".w").forEach((w, n) => { w.style.transitionDelay = 200 + n * 90 + "ms"; });
-    document.body.classList.add("ready");
-  })(start);
+  // ---------- интро: стакан наполняется → крышка открывается → стакан улетает в «I» логотипа ----------
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const FILL_MS = 1600, FLY_MS = 1100;
+
+  async function intro() {
+    const loader = $("#loader"), cup = $("#loaderCup"), fill = $("#loaderFill"), pct = $("#loaderPct"), logoI = $("#logoI");
+    const showPage = () => {
+      document.querySelectorAll(".w").forEach((w, n) => { w.style.transitionDelay = 250 + n * 90 + "ms"; });
+      document.body.classList.add("ready");
+    };
+    if (reduced || !cup.animate) { loader.remove(); showPage(); return; }
+    logoI.style.opacity = "0";
+
+    // 1. наполнение по процентам (лёгкое замедление к концу)
+    const t0 = performance.now();
+    await new Promise((done) => (function tick(now) {
+      const p = Math.min(1, Math.max(0, now - t0) / FILL_MS);
+      const e = 1 - Math.pow(1 - p, 2.2);
+      fill.setAttribute("transform", `translate(0 ${(112 * (1 - e)).toFixed(1)})`);
+      pct.textContent = Math.round(e * 100) + "%";
+      p < 1 ? requestAnimationFrame(tick) : done();
+    })(t0));
+    if (document.fonts) await document.fonts.ready; // чтобы «I» уже стояла на своём месте
+
+    // 2. крышка открывается, фон разъезжается
+    loader.classList.add("open");
+    await wait(320);
+    showPage();
+
+    // 3. полёт по дуге влево-вверх и «сжатие» в букву I
+    const a = cup.getBoundingClientRect(), b = logoI.getBoundingClientRect();
+    const dx = b.left + b.width / 2 - (a.left + a.width / 2);
+    const dy = b.top + b.height / 2 - (a.top + a.height / 2);
+    const sy = (b.height * 1.3) / a.height, sx = (b.width * 2.2) / a.width;
+    const ease = "cubic-bezier(.65, 0, .25, 1)";
+    const fly = cup.animate([
+      { transform: "none" },
+      { transform: `translate(${dx * 0.3}px, ${dy * 0.62}px) scale(.5) rotate(-16deg)`, offset: 0.45 },
+      { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
+    ], { duration: FLY_MS, easing: ease, fill: "forwards" });
+    cup.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, delay: FLY_MS - 200, fill: "forwards" });
+    logoI.animate([
+      { opacity: 0, transform: "scaleY(1.8)", color: "#6B4630" },
+      { opacity: 1, transform: "scaleY(.85)", offset: 0.6 },
+      { opacity: 1, transform: "none" },
+    ], { duration: 500, delay: FLY_MS - 230, easing: "ease-out", fill: "both" });
+    logoI.style.opacity = "";
+
+    await fly.finished;
+    await wait(250);
+    loader.remove();
+  }
+  intro();
 
   renderCart();
 })();
