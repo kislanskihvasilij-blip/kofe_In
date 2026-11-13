@@ -184,6 +184,51 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 4500);
   }
 
+  // ---------- фото справа: следующий кадр «поднимается шторкой» по мере прокрутки ----------
+  const gallery = C.gallery || [];
+  const story = $("#story"), media = $("#storyMedia");
+  if (gallery.length < 2) media.remove();
+  else {
+    $("#storyShots").innerHTML = gallery.map((g, i) =>
+      `<figure class="shot"><img src="${esc(g.src)}" alt="${esc(g.caption)}" decoding="async"${i ? "" : ' fetchpriority="high"'}></figure>`).join(""); // без lazy: скрытые шторкой кадры иначе не грузятся вовремя
+    const shots = [...document.querySelectorAll("#storyShots .shot")];
+    const num = $("#storyNum"), cap = $("#storyCap"), bar = $("#storyBar"), badge = $("#storyBadge");
+    const pad = (n) => String(n).padStart(2, "0");
+    const phone = matchMedia("(max-width: 860px)");
+    $("#storyTotal").textContent = pad(gallery.length);
+    let shown = -1;
+
+    const updateStory = () => {
+      // на десктопе прогресс — по всему блоку герой+манифест, на телефоне — по самому блоку фото
+      const r = (phone.matches ? media : story).getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - innerHeight)));
+      const pos = p * (gallery.length - 1);
+      shots.forEach((el, i) => {
+        const k = i === 0 ? 1 : Math.min(1, Math.max(0, pos - (i - 1))); // 0 — скрыт, 1 — открыт
+        const next = Math.min(1, Math.max(0, pos - i));                  // насколько его уже перекрыл следующий
+        el.style.clipPath = `inset(${((1 - k) * 100).toFixed(2)}% 0 0 0)`;
+        el.firstElementChild.style.transform = `scale(${(1.22 - 0.22 * k + 0.08 * next).toFixed(3)}) translateY(${(-8 * next).toFixed(2)}%)`;
+      });
+      bar.style.transform = `scaleX(${p.toFixed(3)})`;
+      badge.style.transform = `rotate(${(p * 300).toFixed(1)}deg)`;
+      const idx = Math.min(gallery.length - 1, Math.round(pos));
+      if (idx !== shown) {
+        shown = idx;
+        num.textContent = pad(idx + 1);
+        cap.textContent = gallery[idx].caption;
+        if (!reduced) cap.animate([{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }], { duration: 500, easing: "ease-out" });
+      }
+    };
+    let ticking = false;
+    addEventListener("scroll", () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; updateStory(); });
+    }, { passive: true });
+    addEventListener("resize", updateStory);
+    updateStory();
+  }
+
   // ---------- анимации ----------
   const header = $("#header");
   const onScroll = () => header.classList.toggle("solid", scrollY > 40);

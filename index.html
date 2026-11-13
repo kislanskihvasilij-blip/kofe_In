@@ -66,8 +66,8 @@
   </header>
 
   <main id="top">
+    <div class="story" id="story">
     <section class="hero">
-      <div class="hero__steam" aria-hidden="true"><i></i><i></i><i></i></div>
       <ul class="hero__side">
         <li>Кофе</li><li>Авторские напитки</li><li>Десерты</li><li>Зерно домой</li>
       </ul>
@@ -80,8 +80,26 @@
         <a class="pill" href="#catalog">Смотреть каталог</a>
         <span class="hero__rating" id="heroRating"></span>
       </div>
-      <span class="hero__scroll">листайте вниз</span>
     </section>
+
+    <!-- фото справа: меняются по мере прокрутки (app.js → updateStory) -->
+    <aside class="story__media" id="storyMedia" aria-label="Фото кофейни">
+      <div class="story__frame">
+        <div class="story__shots" id="storyShots"></div>
+        <div class="story__info">
+          <p class="story__cap" id="storyCap"></p>
+          <div class="story__meta"><span id="storyNum">01</span><span class="story__bar"><i id="storyBar"></i></span><span id="storyTotal">05</span></div>
+        </div>
+        <svg class="story__badge" id="storyBadge" viewBox="0 0 120 120" aria-hidden="true">
+          <defs><path id="badgeCircle" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1-88 0"/></defs>
+          <circle cx="60" cy="60" r="58" fill="#2B211C"/>
+          <text font-size="11" letter-spacing="3.2" fill="#FBF5EC" font-family="Manrope,sans-serif" font-weight="600">
+            <textPath href="#badgeCircle">КОФЕ IN · КРАСНОДАР · С 8:00 ·</textPath>
+          </text>
+          <text x="60" y="70" text-anchor="middle" font-size="30" fill="#D9AE84" font-family="Cormorant Garamond,Georgia,serif" font-style="italic">In</text>
+        </svg>
+      </div>
+    </aside>
 
     <section class="manifest" aria-label="О кофейне">
       <p class="manifest__text reveal-words">Утро начинается не с будильника, а с чашки, сваренной для вас. Свежая обжарка, выпечка с утра и пять минут тишины — заберите их с собой.</p>
@@ -91,6 +109,7 @@
         <div><span class="idx">C</span><h3>Десерты утром</h3><p>Круассаны и торты к кофе — каждый день свежие.</p></div>
       </div>
     </section>
+    </div>
 
     <section class="catalog" id="catalog">
       <div class="catalog__head">

@@ -18,6 +18,16 @@ window.KOFE_CONFIG = {
 
   currency: "₽",
 
+  // Фото справа в первом экране — сменяются при прокрутке. Сейчас — бесплатные фото с Unsplash
+  // (лицензия Unsplash, можно использовать без оплаты). Замените на свои: src: "img/1.jpg".
+  gallery: [
+    { src: "https://images.unsplash.com/photo-1595434091143-b375ced5fe5c?w=1000&q=75&auto=format&fit=crop", caption: "Утро начинается с чашки" },
+    { src: "https://images.unsplash.com/photo-1577590835286-1cdd24c08fd7?w=1000&q=75&auto=format&fit=crop", caption: "Латте-арт — руками бариста" },
+    { src: "https://images.unsplash.com/photo-1512568400610-62da28bc8a13?w=1000&q=75&auto=format&fit=crop", caption: "Зерно свежей обжарки" },
+    { src: "https://images.unsplash.com/photo-1578314674306-5f52904e35bd?w=1000&q=75&auto=format&fit=crop", caption: "Холодный кофе с собой" },
+    { src: "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=1000&q=75&auto=format&fit=crop", caption: "Пять минут тишины" },
+  ],
+
   // Каталог. У каждой позиции рисуется миниатюра:
   //   art: "hot" (стакан с манжетой), "cold" (прозрачный со льдом), "espresso" (маленький),
   //        "box" (коробка десерта), "bag" (пачка зерна); по умолчанию — по категории.
